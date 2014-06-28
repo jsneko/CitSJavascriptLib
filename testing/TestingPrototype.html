@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Testing Proxy</title>
+    <script type="text/javascript" data-main="/CatalystJSLibrary/lib/config.js"
+            src="/CatalystJSLibrary/lib/require.min.js"></script>
+    <script type="text/javascript">
+        require(['utils/proxymanager', 'utils'], function (aop_mgr, utils) {
+            function Inu() {
+                this.speak = function (speak) {
+                    alert(utils.guarantee('as_string,has_content', speak, 'Wan! Wan!'));
+                };
+                this.flip = function (times) {
+                    alert('This inu flipped ' + times + ' times!');
+                };
+            }
+
+            aop_mgr.singleton(Inu);
+            aop_mgr.aspect(Inu)
+                    .before('speak', function () {
+                        alert('Another test.');
+                    })
+                    .before('speak', function () {
+                        alert('Unfortunately this inu thinks it\'s a cat. Oh dear.');
+                        return ['Niao, Niao!'];
+                    });
+
+            aop_mgr.useProxy(Inu).speak();
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>
