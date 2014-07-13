@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
+    <base href="/CitSJavascriptLib/"/>
     <meta charset="UTF-8">
     <title>Testing Proxy</title>
-    <script type="text/javascript" data-main="/CitSJavascriptLib/lib/config.js"
-            src="/CitSJavascriptLib/lib/require.min.js"></script>
+    <script type="text/javascript" src="lib/prototype.js"></script>
+    <script type="text/javascript" data-main="lib/config.js" src="lib/require.min.js"></script>
     <script type="text/javascript">
-        require(['utils/proxymanager', 'utils'], function (aop_mgr, utils) {
-            function Inu() {
-                this.speak = function (speak) {
-                    alert(utils.guarantee('as_string,has_content', speak, 'Wan! Wan!'));
-                };
-                this.flip = function (times) {
-                    alert('This inu flipped ' + times + ' times!');
-                };
-            }
-
-            aop_mgr.singleton(Inu);
-            aop_mgr.aspect(Inu)
-                    .before('speak', function () {
-                        alert('Another test.');
-                    })
-                    .before('speak', function () {
-                        alert('Unfortunately this inu thinks it\'s a cat. Oh dear.');
-                        return ['Niao, Niao!'];
-                    });
-
-            aop_mgr.useProxy(Inu).speak();
+        require(['utils/proxymanager', 'utils', 'widgets/htmlbase/text'], function (aop_mgr, utils, text_widget_factory) {
+            var helloWorldWidget = text_widget_factory.newProxyWidget('hello-world-widget-1');
+            helloWorldWidget.aspectBefore('value', function (args) {
+                var comment = args.shift();
+                if (comment === 'Hello World') {
+                    comment += ', how are you!?';
+                }
+                args.unshift(comment);
+                return args;
+            });
+            helloWorldWidget.value('Hello World');
+            helloWorldWidget.addToDOM();
+            window.setTimeout(function () {
+                helloWorldWidget.value('Good night, folks!');
+            }, 3000)
         });
     </script>
 </head>
